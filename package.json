@@ -1,0 +1,17 @@
+{
+  "name": "circleci-to-slack-notifier",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "octocat": "^1.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
