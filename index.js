@@ -1,17 +1,33 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+import { Octokit } from "octokit";
+import express from "express";
+import bodyParser from "body-parser";
+
 const router = express.Router();
 const app = express();
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN,
+});
 
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-router.post("/notify_deployment_start", (request, response) => {
-  //code to perform particular action.
-  //To access POST variable use req.body()methods.
+router.post("/notify_deployment_start", async (request, response) => {
   console.log(request.body);
-  response.send({});
+
+  const { pr_url } = request.body;
+  const parts = pr_url.split("/");
+
+  const pr = await octokit.request(
+    "GET /repos/{owner}/{repo}/pulls/{pull_number}",
+    {
+      owner: parts[3],
+      repo: parts[4],
+      pull_number: parts[6],
+    }
+  );
+
+  response.send(pr);
 });
 
 // add router in the Express app.
