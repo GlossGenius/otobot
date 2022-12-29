@@ -30,17 +30,23 @@ router.post("/notify_deployment_start", async (request, response) => {
     }
   );
 
-  const ghUser = await octokit.request("GET /users/{username}", {
-    username: pr.data.user.login,
+  const ghIdOfUserPrMerger = pr.data.merged_by.login;
+  const ghIdOfUserPrAuthor = pr.data.user.login;
+
+  const ghUserOfPrAuthor = await octokit.request("GET /users/{username}", {
+    username: ghIdOfUserPrAuthor,
+  });
+  const ghUserOfPrMerger = await octokit.request("GET /users/{username}", {
+    username: ghIdOfUserPrMerger,
   });
 
-  const slackUsers = await slackClient.users.list();
+  // const slackUsers = await slackClient.users.list();
 
-  const slackUserForPrAuthor = slackUsers.members.find(
-    (user) => user.real_name === ghUser.data.name
-  );
+  // const slackUserForPrAuthor = slackUsers.members.find(
+  //   (user) => user.real_name === ghUser.data.name
+  // );
 
-  response.send(slackUserForPrAuthor);
+  response.send(ghUserOfPrMerger);
 });
 
 // add router in the Express app.
