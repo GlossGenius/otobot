@@ -1,6 +1,7 @@
 import { Octokit } from "octokit";
 import express from "express";
 import bodyParser from "body-parser";
+import { WebClient } from "@slack/web-api";
 
 const router = express.Router();
 const app = express();
@@ -11,6 +12,8 @@ const octokit = new Octokit({
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+const slackClient = new WebClient(process.env.SLACK_TOKEN);
 
 router.post("/notify_deployment_start", async (request, response) => {
   console.log(request.body);
@@ -31,7 +34,13 @@ router.post("/notify_deployment_start", async (request, response) => {
     username: pr.data.user.login,
   });
 
-  response.send(ghUser);
+  const slackUsers = await slackClient.users.list();
+
+  const slackUserForPrAuthor = slackUsers.members.find(
+    (user) => user.real_name === ghUser.data.name
+  );
+
+  response.send(slackUserForPrAuthor);
 });
 
 // add router in the Express app.
