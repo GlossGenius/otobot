@@ -27,7 +27,11 @@ router.post("/notify_deployment_start", async (request, response) => {
     }
   );
 
-  response.send(pr);
+  const ghUser = await octokit.request("GET /users/{username}", {
+    username: pr.data.user.login,
+  });
+
+  response.send(ghUser);
 });
 
 // add router in the Express app.
