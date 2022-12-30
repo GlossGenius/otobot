@@ -1,10 +1,23 @@
-export function createDeploymentNotificationMessage() {
+function getUserString(user) {
+  return user.slack
+    ? `<@${user.slack.id}>`
+    : `Slack user not found. Github user: ${user.gh.login} (Make sure your full name in GH and Slack match)`;
+}
+
+export function createDeploymentNotificationMessage({
+  users,
+  pr,
+  repo_name,
+  sha1,
+}) {
+  const author = getUserString(users.author);
+
   return [
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: "Deploying a new version of `$CIRCLE_PROJECT_REPONAME` to `production`",
+        text: `Deploying a new version of ${repo_name} to \`production\``,
       },
     },
     {
@@ -12,19 +25,11 @@ export function createDeploymentNotificationMessage() {
       fields: [
         {
           type: "mrkdwn",
-          text: "*Project*: $CIRCLE_PROJECT_REPONAME",
+          text: `*Commit*: ${sha1}`,
         },
         {
           type: "mrkdwn",
-          text: "*Branch*: $CIRCLE_BRANCH",
-        },
-        {
-          type: "mrkdwn",
-          text: "*Commit*: $CIRCLE_SHA1",
-        },
-        {
-          type: "mrkdwn",
-          text: "*Author*: $CIRCLE_USERNAME",
+          text: `*Author*: ${author}`,
         },
       ],
     },
