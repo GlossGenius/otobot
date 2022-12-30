@@ -2,6 +2,7 @@ import { Octokit } from "octokit";
 import express from "express";
 import bodyParser from "body-parser";
 import { WebClient } from "@slack/web-api";
+import { createDeploymentNotificationMessage } from "./slackMessages.js ";
 
 const router = express.Router();
 const app = express();
@@ -40,13 +41,18 @@ router.post("/notify_deployment_start", async (request, response) => {
     username: ghIdOfUserPrMerger,
   });
 
-  // const slackUsers = await slackClient.users.list();
+  const slackUsers = await slackClient.users.list();
 
-  // const slackUserForPrAuthor = slackUsers.members.find(
-  //   (user) => user.real_name === ghUser.data.name
-  // );
+  const slackUserForPrAuthor = slackUsers.members.find(
+    (user) => user.real_name === ghUserOfPrAuthor.data.name
+  );
 
-  response.send(ghUserOfPrMerger);
+  slackClient.chat.postMessage({
+    channel: "#general",
+    blocks: createDeploymentNotificationMessage(),
+  });
+
+  response.send(200);
 });
 
 // add router in the Express app.
