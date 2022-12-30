@@ -1,7 +1,8 @@
 function getUserString(user) {
+  console.log(user.gh);
   return user.slack
     ? `<@${user.slack.id}>`
-    : `Slack user not found. Github user: ${user.gh.login} (Make sure your full name in GH and Slack match)`;
+    : `Slack user not found. Github user: [${user.gh.data.login}](${user.gh.data.html_url}) (Make sure your full name in GH and Slack match)`;
 }
 
 export function createDeploymentNotificationMessage({
