@@ -9,11 +9,23 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+/**
+ * TODO
+ * - deployment end message
+ * - pr body in thread
+ * - approve button
+ * - templatize longer message with handlebars or something
+ */
 router.post("/notify_deployment_start", async (request, response) => {
   const { pr_url, slack_channel, repo_name, sha1 } = request.body;
 
   try {
-    await sendDeployStartMessage({ pr_url, slack_channel, repo_name, sha1 });
+    await sendDeployStartMessage({
+      pr_url,
+      slack_channel,
+      repo_name,
+      sha1,
+    });
   } catch (e) {
     response.send(500, e);
   }

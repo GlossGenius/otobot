@@ -6,8 +6,11 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
-const slackClient = new WebClient(process.env.SLACK_TOKEN);
+const slackClient = new WebClient(process.env.SLACK_TOKEN, {
+  rejectRateLimitedCalls: true,
+});
 
+// TODO: Make this work for a direct push (no pr)
 export async function sendDeployStartMessage({
   pr_url,
   slack_channel,
@@ -65,8 +68,14 @@ export async function sendDeployStartMessage({
     sha1,
   });
 
-  slackClient.chat.postMessage({
+  const message = await slackClient.chat.postMessage({
     channel: slack_channel,
-    blocks,
+    blocks: blocks.initialMessage,
+  });
+
+  return slackClient.chat.postMessage({
+    channel: slack_channel,
+    thread_ts: message.ts,
+    blocks: blocks.thread,
   });
 }
