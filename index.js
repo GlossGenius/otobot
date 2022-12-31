@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 /**
  * TODO
  * - deployment end message
- * - pr body in thread
+ * - memoize fetchers
  * - approve button
  * - templatize longer message with handlebars or something
  */

@@ -1,7 +1,12 @@
-function getUserString(user) {
-  return user.slack
-    ? `<@${user.slack.id}>`
-    : `Slack user not found. Github user: <${user.gh.data.html_url}|${user.gh.data.login}> (Make sure your full name in GH and Slack match)`;
+function getUserStrings(user) {
+  return {
+    short: user.slack
+      ? `<@${user.slack.id}>`
+      : `<${user.gh.data.html_url}|${user.gh.data.login}>`,
+    long: user.slack
+      ? `<@${user.slack.id}>`
+      : `Slack user not found. Github user: <${user.gh.data.html_url}|${user.gh.data.login}> (Make sure your full name in GH and Slack match)`,
+  };
 }
 
 export function createDeploymentNotificationMessage({
@@ -10,52 +15,70 @@ export function createDeploymentNotificationMessage({
   repo_name,
   sha1,
 }) {
-  console.log(pr.data.body);
-  const author = getUserString(users.author);
-  return {
-    initialMessage: [
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `Deploying a new version of ${repo_name} to \`production\``,
-        },
+  const author = getUserStrings(users.author);
+  const merger = getUserStrings(users.merger);
+
+  const initialMessage = [];
+  initialMessage.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `${merger.short}, by merging a PR to \`main\`, has started a deployment of ${repo_name} to \`production\`
+If you didn't mean to start this deployment, please go to the workflow on CircleCI and cancel it.
+
+Expectations of ${merger.short}:
+- They will be available for at least an hour to respond to any issues that come up. Please keep an eye on #incidents
+- They will test new changes in production when the deployment is done.`,
+    },
+  });
+  initialMessage.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `*PR Title*: <${pr.data.html_url}|${pr.data.title}>`,
+    },
+  });
+  initialMessage.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `*Author*: ${author.long}`,
+    },
+  });
+
+  if (users.merger.gh.login !== users.author.gh.login) {
+    initialMessage.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*Merger*: ${merger.long}`,
       },
+    });
+  }
+
+  initialMessage.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `*Commit*: ${sha1}`,
+    },
+  });
+  initialMessage.push({
+    type: "actions",
+    elements: [
       {
-        type: "section",
+        type: "button",
         text: {
-          type: "mrkdwn",
-          text: `*PR Title*: <${pr.data.html_url}|${pr.data.title}>`,
+          type: "plain_text",
+          text: "View Build Log",
         },
-      },
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*Author*: ${author}`,
-        },
-      },
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*Commit*: ${sha1}`,
-        },
-      },
-      {
-        type: "actions",
-        elements: [
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "View Build Log",
-            },
-            url: "https://app.circleci.com/pipelines/asdf",
-          },
-        ],
+        url: "https://app.circleci.com/pipelines/asdf",
       },
     ],
+  });
+
+  return {
+    initialMessage,
     thread: [
       {
         type: "section",
