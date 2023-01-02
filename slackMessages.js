@@ -14,6 +14,7 @@ export function createDeploymentNotificationMessage({
   pr,
   repo_name,
   sha1,
+  workflow_url,
 }) {
   const author = getUserStrings(users.author);
   const merger = getUserStrings(users.merger);
@@ -24,7 +25,7 @@ export function createDeploymentNotificationMessage({
     text: {
       type: "mrkdwn",
       text: `${merger.short}, by merging a PR to \`main\`, has started a deployment of ${repo_name} to \`production\`
-If you didn't mean to start this deployment, please go to the workflow on CircleCI and cancel it.
+If you didn't mean to start this deployment, please go to <${workflow_url}|the workflow on CircleCI> and cancel it.
 
 Expectations of ${merger.short}:
 - They will be available for at least an hour to respond to any issues that come up. Please keep an eye on #incidents
@@ -72,7 +73,7 @@ Expectations of ${merger.short}:
           type: "plain_text",
           text: "View Build Log",
         },
-        url: "https://app.circleci.com/pipelines/asdf",
+        url: workflow_url,
       },
     ],
   });

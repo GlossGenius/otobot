@@ -16,6 +16,7 @@ export async function sendDeployStartMessage({
   slack_channel,
   repo_name,
   sha1,
+  workflow_url,
 }) {
   const parts = pr_url.split("/");
 
@@ -66,6 +67,7 @@ export async function sendDeployStartMessage({
     pr,
     repo_name,
     sha1,
+    workflow_url,
   });
 
   const message = await slackClient.chat.postMessage({

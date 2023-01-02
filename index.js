@@ -15,9 +15,10 @@ app.use(bodyParser.json());
  * - memoize fetchers
  * - approve button
  * - templatize longer message with handlebars or something
+ * - include link to circle workflow
  */
 router.post("/notify_deployment_start", async (request, response) => {
-  const { pr_url, slack_channel, repo_name, sha1 } = request.body;
+  const { pr_url, slack_channel, repo_name, sha1, workflow_url } = request.body;
 
   try {
     await sendDeployStartMessage({
@@ -25,6 +26,7 @@ router.post("/notify_deployment_start", async (request, response) => {
       slack_channel,
       repo_name,
       sha1,
+      workflow_url,
     });
   } catch (e) {
     response.send(500, e);
