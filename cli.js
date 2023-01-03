@@ -5,8 +5,14 @@ import { sendDeployStartMessage } from "./sendDeployStartMessage.js";
 
 const argv = yargs(hideBin(process.argv))
   .usage("Usage: $0 <command> [options]")
-  .command("notify-start", "Sends message to Slack that deployment is starting")
-  .command("notify-end", "Sends message to Slack that deployment is starting")
+  .command(
+    "notify-deploy-start",
+    "Sends message to Slack that deployment is starting"
+  )
+  .command(
+    "notify-deploy-end",
+    "Sends message to Slack that deployment is starting"
+  )
   .option("pr_url")
   .option("slack_channel")
   .option("sha1")
@@ -18,14 +24,14 @@ const argv = yargs(hideBin(process.argv))
 const commandString = argv._[0];
 
 async function execute() {
-  if (commandString === "notify-start") {
+  if (commandString === "notify-deploy-start") {
     try {
       await sendDeployStartMessage(argv);
       console.log("Done");
     } catch (e) {
       console.error(e);
     }
-  } else if (commandString === "notify-end") {
+  } else if (commandString === "notify-deploy-end") {
     //TODO
   }
 }

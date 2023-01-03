@@ -1,10 +1,10 @@
 {
-  "name": "deploy-notifier",
+  "name": "otobot",
   "type": "module",
   "version": "1.0.0",
   "license": "MIT",
   "bin": {
-    "deploy-notifier": "./cli.js"
+    "otobot": "./cli.js"
   },
   "scripts": {
     "dev": "nodemon server.js"
