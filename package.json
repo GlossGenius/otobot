@@ -1,11 +1,11 @@
 {
-  "name": "circleci-to-slack-notifier",
+  "name": "deploy-notifier",
   "type": "module",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "@slack/web-api": "^6.8.0",
