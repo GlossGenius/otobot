@@ -14,17 +14,17 @@ const slackClient = new WebClient(process.env.SLACK_TOKEN, {
 export async function sendDeployStartMessage({
   pr_url,
   slack_channel,
-  repo_name,
   sha1,
   workflow_url,
 }) {
   const parts = pr_url.split("/");
+  const repo_name = parts[4];
 
   const pr = await octokit.request(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}",
     {
       owner: parts[3],
-      repo: parts[4],
+      repo: repo_name,
       pull_number: parts[6],
     }
   );

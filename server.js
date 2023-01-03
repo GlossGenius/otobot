@@ -18,18 +18,18 @@ app.use(bodyParser.json());
  * - include link to circle workflow
  */
 router.post("/notify_deployment_start", async (request, response) => {
-  const { pr_url, slack_channel, repo_name, sha1, workflow_url } = request.body;
+  const { pr_url, slack_channel, sha1, workflow_url } = request.body;
 
   try {
     await sendDeployStartMessage({
       pr_url,
       slack_channel,
-      repo_name,
       sha1,
       workflow_url,
     });
   } catch (e) {
     response.send(500, e);
+    return;
   }
 
   response.send(200);

@@ -1,18 +1,33 @@
 #!/usr/bin/env node
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import { sendDeployStartMessage } from "./sendDeployStartMessage.js";
 
-const argv =
-  //   .example("$0 count -f foo.js", "count the lines in the given file")
-  //   .alias("f", "file")
-  //   .nargs("f", 1)
-  //   .describe("f", "Load a file")
-  //   .demandOption(["f"])
-  //   .help("h")
-  //   .alias("h", "help")
-  //   .epilog("copyright 2019")
-  yargs(hideBin(process.argv))
-    .usage("Usage: $0 <command> [options]")
-    .command("count", "Count the lines in a file").argv;
+const argv = yargs(hideBin(process.argv))
+  .usage("Usage: $0 <command> [options]")
+  .command("notify-start", "Sends message to Slack that deployment is starting")
+  .command("notify-end", "Sends message to Slack that deployment is starting")
+  .option("pr_url")
+  .option("slack_channel")
+  .option("sha1")
+  .option("workflow_url")
+  .demandOption(["pr_url", "slack_channel", "sha1", "workflow_url"])
+  .help("h")
+  .alias("h", "help").argv;
 
-console.log(argv);
+const commandString = argv._[0];
+
+async function execute() {
+  if (commandString === "notify-start") {
+    try {
+      await sendDeployStartMessage(argv);
+      console.log("Done");
+    } catch (e) {
+      console.error(e);
+    }
+  } else if (commandString === "notify-end") {
+    //TODO
+  }
+}
+
+execute();
