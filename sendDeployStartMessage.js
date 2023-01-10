@@ -12,27 +12,36 @@ const slackClient = new WebClient(process.env.SLACK_TOKEN, {
 
 // TODO: Make this work for a direct push (no pr)
 export async function sendDeployStartMessage({
-  pr_url,
   slack_channel,
   sha1,
+  repo_owner,
+  repo_name,
   workflow_url,
 }) {
   console.log("Preparing deployment message with following params", {
-    pr_url,
     slack_channel,
     sha1,
+    repo_owner,
+    repo_name,
     workflow_url,
   });
+  const results = await octokit.request(
+    "GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls{?per_page,page}",
+    {
+      owner: repo_owner,
+      repo: repo_name,
+      commit_sha: sha1,
+    }
+  );
 
-  const parts = pr_url.split("/");
-  const repo_name = parts[4];
+  const incompletePrData = results.data[0];
 
   const pr = await octokit.request(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}",
     {
-      owner: parts[3],
+      owner: repo_owner,
       repo: repo_name,
-      pull_number: parts[6],
+      pull_number: incompletePrData.number,
     }
   );
 

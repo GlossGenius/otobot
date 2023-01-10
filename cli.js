@@ -13,11 +13,18 @@ const argv = yargs(hideBin(process.argv))
     "notify-deploy-end",
     "Sends message to Slack that deployment is starting"
   )
-  .option("pr_url")
   .option("slack_channel")
   .option("sha1")
+  .option("repo_owner")
+  .option("repo_name")
   .option("workflow_url")
-  .demandOption(["pr_url", "slack_channel", "sha1", "workflow_url"])
+  .demandOption([
+    "slack_channel",
+    "repo_owner",
+    "repo_name",
+    "sha1",
+    "workflow_url",
+  ])
   .help("h")
   .alias("h", "help").argv;
 

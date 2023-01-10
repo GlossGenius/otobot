@@ -29,7 +29,8 @@ If you didn't mean to start this deployment, please go to <${workflow_url}|the w
 
 Expectations of ${merger.short}:
 - They will be available for at least an hour to respond to any issues that come up. Please keep an eye on #incidents
-- They will test new changes in production when the deployment is done.`,
+- They will test new changes in production when the deployment is done.
+- They have gotten approval for visual changes with their team's designer, unless those changes are hidden behind a feature flag`,
     },
   });
   initialMessage.push({
