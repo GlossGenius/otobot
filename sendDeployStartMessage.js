@@ -17,6 +17,13 @@ export async function sendDeployStartMessage({
   sha1,
   workflow_url,
 }) {
+  console.log("Preparing deployment message with following params", {
+    pr_url,
+    slack_channel,
+    sha1,
+    workflow_url,
+  });
+
   const parts = pr_url.split("/");
   const repo_name = parts[4];
 
